@@ -1,13 +1,3 @@
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.DependencyInjection;
-using Volo.Abp;
-using Volo.Abp.EntityFrameworkCore;
-using Volo.Abp.EntityFrameworkCore.Sqlite;
-using Volo.Abp.Modularity;
-
 namespace Lion.AbpPro.EntityFrameworkCore
 {
     [DependsOn(
@@ -30,6 +20,10 @@ namespace Lion.AbpPro.EntityFrameworkCore
 
             services.Configure<AbpDbContextOptions>(options =>
             {
+                options.PreConfigure<AbpProDbContext>(options =>
+                {
+                    options.DbContextOptions.UseBatchEF_Sqlite();
+                });
                 options.Configure(context =>
                 {
                     context.DbContextOptions.UseSqlite(_sqliteConnection);

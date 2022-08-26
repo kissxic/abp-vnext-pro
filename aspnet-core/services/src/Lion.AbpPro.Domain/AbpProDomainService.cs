@@ -1,9 +1,4 @@
-using System;
-using Microsoft.Extensions.DependencyInjection;
-using Volo.Abp.Domain.Services;
-using Volo.Abp.EventBus.Distributed;
-using Volo.Abp.ObjectMapping;
-using Volo.Abp.Uow;
+using Volo.Abp.EventBus.Local;
 
 namespace Lion.AbpPro
 {
@@ -17,6 +12,11 @@ namespace Lion.AbpPro
         protected IUnitOfWorkManager UnitOfWorkManager =>
             LazyServiceProvider.LazyGetRequiredService<IUnitOfWorkManager>();
 
+        /// <summary>
+        /// 领域事件总线
+        /// </summary>
+        protected ILocalEventBus LocalEventBus =>
+            LazyServiceProvider.LazyGetRequiredService<ILocalEventBus>();
         /// <summary>
         /// 分布式事件总线
         /// </summary>

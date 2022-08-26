@@ -1,12 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using Lion.AbpPro.DataDictionaryManagement.DataDictionaries.Exceptions;
-using Lion.AbpPro.Extension.Customs;
-using Volo.Abp.Domain.Entities.Auditing;
-using Volo.Abp.MultiTenancy;
-
 namespace Lion.AbpPro.DataDictionaryManagement.DataDictionaries.Aggregates
 {
     /// <summary>
@@ -114,6 +105,12 @@ namespace Lion.AbpPro.DataDictionaryManagement.DataDictionaries.Aggregates
             }
 
             Details.Remove(detail);
+        }
+
+        public void Update(Guid dataDictionayDetailId,string displayText,string description)
+        {
+            SetDescription(description);
+            SetDisplayText(displayText);
         }
     }
 }

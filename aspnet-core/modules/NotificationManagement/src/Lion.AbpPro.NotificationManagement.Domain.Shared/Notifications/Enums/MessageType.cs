@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace Lion.AbpPro.NotificationManagement.Notifications
+namespace Lion.AbpPro.NotificationManagement.Notifications.Enums
 {
     /// <summary>
     /// 消息类型 
@@ -17,7 +17,7 @@ namespace Lion.AbpPro.NotificationManagement.Notifications
         /// 普通文本消息
         /// </summary>
         [Description("普通文本消息")]
-        Text = 20,
+        Common = 20,
 
     }
 }

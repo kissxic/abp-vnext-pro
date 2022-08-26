@@ -1,8 +1,3 @@
-using System.IO;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.Configuration;
-
 namespace Lion.AbpPro.EntityFrameworkCore
 {
     /* This class is needed for EF Core console commands
@@ -24,8 +19,19 @@ namespace Lion.AbpPro.EntityFrameworkCore
         private static IConfigurationRoot BuildConfiguration()
         {
             var builder = new ConfigurationBuilder()
-                .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../Lion.AbpPro.DbMigrator/"))
-                .AddJsonFile("appsettings.json", optional: false);
+                .SetBasePath
+                (
+                    Path.Combine
+                    (
+                        Directory.GetCurrentDirectory(),
+                        "../Lion.AbpPro.DbMigrator/"
+                    )
+                )
+                .AddJsonFile
+                (
+                    "appsettings.json",
+                    false
+                );
 
             return builder.Build();
         }

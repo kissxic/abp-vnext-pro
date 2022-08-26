@@ -1,14 +1,7 @@
-using System.Threading.Tasks;
-using Lion.AbpPro.DataDictionaryManagement.DataDictionaries.Dtos;
-using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
-using Volo.Abp.Application.Dtos;
-using Volo.Abp.Application.Services;
-
 namespace Lion.AbpPro.DataDictionaryManagement.DataDictionaries
 {
     [Route("DataDictionary")]
-    public class DataDictionaryController : DataDictionaryManagementController, IApplicationService
+    public class DataDictionaryController : DataDictionaryManagementController, IDataDictionaryAppService
     {
         private readonly IDataDictionaryAppService _dataDictionaryAppService;
 
@@ -25,7 +18,7 @@ namespace Lion.AbpPro.DataDictionaryManagement.DataDictionaries
             return _dataDictionaryAppService.GetPagingListAsync(input);
         }
 
-        [HttpPost("page/detail")]
+        [HttpPost("pageDetail")]
         [SwaggerOperation(summary: "分页字典明细", Tags = new[] { "DataDictionary" })]
         public  Task<PagedResultDto<PagingDataDictionaryDetailOutput>> GetPagingDetailListAsync(
             PagingDataDictionaryDetailInput input)
@@ -53,5 +46,35 @@ namespace Lion.AbpPro.DataDictionaryManagement.DataDictionaries
         {
             return _dataDictionaryAppService.SetStatus(input);
         }
+
+        [HttpPost("updateDetail")]
+        [SwaggerOperation(summary: "更新字典明细", Tags = new[] { "DataDictionary" })]
+        public Task UpdateDetailAsync(UpdateDetailInput input)
+        {
+            return _dataDictionaryAppService.UpdateDetailAsync(input);
+        }
+
+        [HttpPost("delete")]
+        [SwaggerOperation(summary: "删除字典明细", Tags = new[] { "DataDictionary" })]
+        public Task DeleteAsync(DeleteDataDictionaryDetailInput input)
+        {
+            return _dataDictionaryAppService.DeleteAsync(input);
+        }
+
+        [HttpPost("deleteDictinaryType")]
+        [SwaggerOperation(summary: "删除字典类型", Tags = new[] { "DataDictionary" })]
+        public Task DeleteDictinaryTypeAsync(IdInput input)
+        {
+            return _dataDictionaryAppService.DeleteDictinaryTypeAsync(input);
+        }
+
+
+        [HttpPost("update")]
+        [SwaggerOperation(summary: "修改字典类型", Tags = new[] { "DataDictionary" })]
+        public Task UpdateAsync(UpdateDataDictinaryInput input)
+        {
+            return _dataDictionaryAppService.UpdateAsync(input);
+        }
+
     }
 }

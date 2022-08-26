@@ -1,23 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using DotNetCore.CAP;
-using DotNetCore.CAP.Internal;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using Volo.Abp.DependencyInjection;
-using Volo.Abp.EventBus;
-using Volo.Abp.EventBus.Distributed;
-
 namespace Lion.AbpPro.CAP
 {
     [Dependency(ServiceLifetime.Singleton, ReplaceServices = true)]
     [ExposeServices(typeof(IConsumerServiceSelector))]
-    public class AbpProAbpCapConsumerServiceSelector : ConsumerServiceSelector
+    public sealed class AbpProAbpCapConsumerServiceSelector : ConsumerServiceSelector
     {
-        protected AbpDistributedEventBusOptions AbpDistributedEventBusOptions { get; }
-        protected IServiceProvider ServiceProvider { get; }
+        private AbpDistributedEventBusOptions AbpDistributedEventBusOptions { get; }
+        private IServiceProvider ServiceProvider { get; }
 
         /// <summary>
         /// Creates a new <see cref="T:DotNetCore.CAP.Internal.ConsumerServiceSelector" />.
@@ -73,7 +61,7 @@ namespace Lion.AbpPro.CAP
             return executorDescriptorList;
         }
 
-        protected virtual IEnumerable<ConsumerExecutorDescriptor> GetHandlerDescription(Type eventType,Type typeInfo)
+        private IEnumerable<ConsumerExecutorDescriptor> GetHandlerDescription(Type eventType,Type typeInfo)
         {
             var serviceTypeInfo = typeof(IDistributedEventHandler<>)
                 .MakeGenericType(eventType);

@@ -1,19 +1,4 @@
-using System;
-using System.Linq;
-using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Volo.Abp.AspNetCore.ExceptionHandling;
-using Volo.Abp.AspNetCore.Mvc.AntiForgery;
-using Volo.Abp.Autofac;
-using Volo.Abp.Localization;
-using Volo.Abp.Modularity;
-using Volo.Abp.Swashbuckle;
-using Volo.Abp.UI.Navigation.Urls;
-
-namespace Lion.AbpPro
+namespace Lion.AbpPro.Shared.Hosting.Microservices
 {
     [DependsOn(
         typeof(AbpSwashbuckleModule),
@@ -30,7 +15,6 @@ namespace Lion.AbpPro
             ConfigureLocalization();
             ConfigureCors(context);
             ConfigureUrls(configuration);
-            ConfigureAbpExceptions(context);
             ConfigureConsul(context, configuration);
             ConfigAntiForgery();
         }
@@ -56,23 +40,7 @@ namespace Lion.AbpPro
             }
         }
 
-        /// <summary>
-        /// 异常处理
-        /// </summary>
-        /// <param name="context"></param>
-        private void ConfigureAbpExceptions(ServiceConfigurationContext context)
-        {
-            //开启后通过ErrorCode抛本地化异常，message不会显示本地化词条
-            var SendExceptionsDetails = context.Services.GetHostingEnvironment().IsDevelopment();
-            context.Services.Configure<AbpExceptionHandlingOptions>(options =>
-            {
-                options.SendExceptionsDetailsToClients = SendExceptionsDetails;
-            });
-            context.Services.AddMvc(options =>
-            {
-                options.Filters.Add(typeof(ResultExceptionFilter));
-            });
-        }
+
 
         /// <summary>
         /// 配置跨域

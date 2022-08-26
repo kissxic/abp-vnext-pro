@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Lion.AbpPro.NotificationManagement.Notifications.DistributedEvents;
-using Lion.AbpPro.NotificationManagement.Notifications.Etos;
-using Volo.Abp.Users;
+using Lion.AbpPro.NotificationManagement.Notifications.LocalEvents;
 
 namespace Lion.AbpPro.NotificationManagement.Notifications
 {
@@ -20,17 +14,37 @@ namespace Lion.AbpPro.NotificationManagement.Notifications
             _currentUser = currentUser;
         }
 
+        /// <summary>
+        /// 分页获取消息
+        /// </summary>
+        public async Task<List<Notification>> GetPagingListAsync(
+            Guid? userId,
+            MessageType messageType,
+            int maxResultCount = 10,
+            int skipCount = 0)
+        {
+            return await _notificationRepository.GetPagingListAsync(userId, messageType, maxResultCount, skipCount);
+        }
 
         /// <summary>
-        /// 发送普通文本消息
+        /// 获取消息总条数
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NotificationManagementDomainException"></exception>
-        public async Task<Notification> SendCommonTextAsync(string title, string content, List<Guid> receiveIds)
+        public async Task<long> GetPagingCountAsync(Guid? userId, MessageType messageType)
         {
-            if (receiveIds is {Count: 0})
+            return await _notificationRepository.GetPagingCountAsync(userId, messageType);
+        }
+
+        /// <summary>
+        /// 发送警告文本消息
+        /// </summary>
+        /// <param name="title">标题</param>
+        /// <param name="content">消息内容</param>
+        /// <param name="receiveIds">接受人，发送给谁。</param>
+        public async Task SendCommonWarningMessageAsync(string title, string content, List<Guid> receiveIds)
+        {
+            if (receiveIds is { Count: 0 })
             {
-                throw new NotificationManagementDomainException("消息接收人不能为空");
+                throw new NotificationManagementDomainException(NotificationManagementErrorCodes.ReceiverNotNull);
             }
 
             var senderId = Guid.Empty;
@@ -39,7 +53,7 @@ namespace Lion.AbpPro.NotificationManagement.Notifications
                 senderId = _currentUser.Id.Value;
             }
 
-            var entity = new Notification(GuidGenerator.Create(), title, content, MessageType.Text, senderId);
+            var entity = new Notification(GuidGenerator.Create(), title, content, MessageType.Common, MessageLevel.Warning, senderId);
             foreach (var item in receiveIds)
             {
                 entity.AddNotificationSubscription(GuidGenerator.Create(), item);
@@ -47,16 +61,75 @@ namespace Lion.AbpPro.NotificationManagement.Notifications
 
             var notificationEto = ObjectMapper.Map<Notification, NotificationEto>(entity);
             // 发送集成事件
-            entity.AddCreatedNotificationDistributedEvent(new CreatedNotificationDistributedEvent(notificationEto));
-            return entity = await _notificationRepository.InsertAsync(entity);
+            entity.AddCreatedNotificationLocalEvent(new CreatedNotificationLocalEvent(notificationEto));
+            await _notificationRepository.InsertAsync(entity);
         }
 
         /// <summary>
-        /// 发送广播消息
+        /// 发送普通文本消息
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NotificationManagementDomainException"></exception>
-        public async Task<Notification> SendBroadCastTextAsync(string title, string content)
+        /// <param name="title">标题</param>
+        /// <param name="content">消息内容</param>
+        /// <param name="receiveIds">接受人，发送给谁。</param>
+        public async Task SendCommonInformationMessageAsync(string title, string content, List<Guid> receiveIds)
+        {
+            if (receiveIds is { Count: 0 })
+            {
+                throw new NotificationManagementDomainException(NotificationManagementErrorCodes.ReceiverNotNull);
+            }
+
+            var senderId = Guid.Empty;
+            if (_currentUser?.Id != null)
+            {
+                senderId = _currentUser.Id.Value;
+            }
+
+            var entity = new Notification(GuidGenerator.Create(), title, content, MessageType.Common, MessageLevel.Information, senderId);
+            foreach (var item in receiveIds)
+            {
+                entity.AddNotificationSubscription(GuidGenerator.Create(), item);
+            }
+
+            var notificationEto = ObjectMapper.Map<Notification, NotificationEto>(entity);
+            // 发送集成事件
+            entity.AddCreatedNotificationLocalEvent(new CreatedNotificationLocalEvent(notificationEto));
+            await _notificationRepository.InsertAsync(entity);
+        }
+
+        /// <summary>
+        /// 发送错误文本消息
+        /// </summary>
+        public async Task SendCommonErrorMessageAsync(string title, string content, List<Guid> receiveIds)
+        {
+            if (receiveIds is { Count: 0 })
+            {
+                throw new NotificationManagementDomainException(NotificationManagementErrorCodes.ReceiverNotNull);
+            }
+
+            var senderId = Guid.Empty;
+            if (_currentUser?.Id != null)
+            {
+                senderId = _currentUser.Id.Value;
+            }
+
+            var entity = new Notification(GuidGenerator.Create(), title, content, MessageType.Common, MessageLevel.Error, senderId);
+            foreach (var item in receiveIds)
+            {
+                entity.AddNotificationSubscription(GuidGenerator.Create(), item);
+            }
+
+            var notificationEto = ObjectMapper.Map<Notification, NotificationEto>(entity);
+            // 发送集成事件
+            entity.AddCreatedNotificationLocalEvent(new CreatedNotificationLocalEvent(notificationEto));
+            await _notificationRepository.InsertAsync(entity);
+        }
+
+        /// <summary>
+        /// 发送警告广播消息
+        /// </summary>
+        /// <param name="title">标题</param>
+        /// <param name="content">消息内容</param>
+        public async Task SendBroadCastWarningMessageAsync(string title, string content)
         {
             var senderId = Guid.Empty;
             if (_currentUser?.Id != null)
@@ -64,65 +137,74 @@ namespace Lion.AbpPro.NotificationManagement.Notifications
                 senderId = _currentUser.Id.Value;
             }
 
-            var entity = new Notification(GuidGenerator.Create(), title, content, MessageType.BroadCast, senderId);
+            var entity = new Notification(GuidGenerator.Create(), title, content, MessageType.BroadCast, MessageLevel.Warning, senderId);
             var notificationEto = ObjectMapper.Map<Notification, NotificationEto>(entity);
             // 发送集成事件
-            entity.AddCreatedNotificationDistributedEvent(new CreatedNotificationDistributedEvent(notificationEto));
-            return entity = await _notificationRepository.InsertAsync(entity);
+            entity.AddCreatedNotificationLocalEvent(new CreatedNotificationLocalEvent(notificationEto));
+            await _notificationRepository.InsertAsync(entity);
         }
 
         /// <summary>
-        /// 新增消息
+        /// 发送正常广播消息
         /// </summary>
         /// <param name="title">标题</param>
         /// <param name="content">消息内容</param>
-        /// <param name="senderId">发送人id,可以直接取ICurrentUser对象的用户</param>
-        /// <param name="receiveIds">消息接收人</param>
-        /// <param name="messageType">消息类似 10 广播消息，所有用户都可以接收到 ；20 普通文本消息 需要指定接收用户</param>
-        public async Task CreateAsync(
-            string title,
-            string content,
-            Guid senderId,
-            List<Guid> receiveIds,
-            MessageType messageType = MessageType.Text)
+        public async Task SendBroadCastInformationMessageAsync(string title, string content)
         {
-            var entity = new Notification(GuidGenerator.Create(), title, content, messageType, senderId);
-
-            if (messageType == MessageType.Text)
+            var senderId = Guid.Empty;
+            if (_currentUser?.Id != null)
             {
-                if (receiveIds is {Count: > 0})
-                {
-                    receiveIds.ForEach(item => { entity.AddNotificationSubscription(GuidGenerator.Create(), item); });
-                }
+                senderId = _currentUser.Id.Value;
             }
 
-            entity = await _notificationRepository.InsertAsync(entity);
+            var entity = new Notification(GuidGenerator.Create(), title, content, MessageType.BroadCast, MessageLevel.Information, senderId);
             var notificationEto = ObjectMapper.Map<Notification, NotificationEto>(entity);
             // 发送集成事件
-            entity.AddCreatedNotificationDistributedEvent(new CreatedNotificationDistributedEvent(notificationEto));
+            entity.AddCreatedNotificationLocalEvent(new CreatedNotificationLocalEvent(notificationEto));
+            await _notificationRepository.InsertAsync(entity);
+        }
+
+        /// <summary>
+        /// 发送错误广播消息
+        /// </summary>
+        /// <param name="title">标题</param>
+        /// <param name="content">消息内容</param>
+        public async Task SendBroadCastErrorMessageAsync(string title, string content)
+        {
+            var senderId = Guid.Empty;
+            if (_currentUser?.Id != null)
+            {
+                senderId = _currentUser.Id.Value;
+            }
+
+            var entity = new Notification(GuidGenerator.Create(), title, content, MessageType.BroadCast, MessageLevel.Error, senderId);
+            var notificationEto = ObjectMapper.Map<Notification, NotificationEto>(entity);
+            entity.AddCreatedNotificationLocalEvent(new CreatedNotificationLocalEvent(notificationEto));
+            await _notificationRepository.InsertAsync(entity);
         }
 
         /// <summary>
         /// 消息设置为已读
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="receiveId"></param>
-        /// <exception cref="NotificationManagementDomainException"></exception>
-        public async Task SetReadAsync(Guid id, Guid receiveId)
+        /// <param name="id">消息Id</param>
+        public async Task SetReadAsync(Guid id)
         {
+            if (_currentUser is not { IsAuthenticated: true }) throw new AbpAuthorizationException();
+            
             var notification = await _notificationRepository.FindByIdAsync(id);
-            if (notification == null) throw new NotificationManagementDomainException(message: "消息不存在");
+            
+            if (notification == null) throw new NotificationManagementDomainException(NotificationManagementErrorCodes.MessageNotExist);
             if (notification.MessageType == MessageType.BroadCast)
             {
-                // 如果类型是广播消息，用户设置为已读，在插入一条数据
-                notification.AddBroadCastNotificationSubscription(GuidGenerator.Create(), receiveId);
+                //如果类型是广播消息，用户设置为已读，在插入一条数据
+                notification.AddBroadCastNotificationSubscription(GuidGenerator.Create(), _currentUser.GetId());
+                return;
             }
             else
             {
-                var notificationSubscription =
-                    notification.NotificationSubscriptions.FirstOrDefault(e => e.ReceiveId == receiveId);
+                var notificationSubscription = notification.NotificationSubscriptions.FirstOrDefault(e => e.ReceiveId == _currentUser.GetId());
                 if (notificationSubscription == null)
-                    throw new NotificationManagementDomainException(message: "当前用户未订阅该消息");
+                    throw new NotificationManagementDomainException(NotificationManagementErrorCodes.UserUnSubscription);
                 notificationSubscription.SetRead();
             }
 

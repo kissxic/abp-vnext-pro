@@ -1,8 +1,4 @@
-using System;
-using Consul;
-using Microsoft.Extensions.Configuration;
-
-namespace Microsoft.Extensions.DependencyInjection
+namespace Lion.AbpPro.Shared.Hosting.Microservices.Microsoft.Extensions.DependencyInjection
 {
     public static class ServiceCollectionExtensions
     {

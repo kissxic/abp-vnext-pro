@@ -1,13 +1,8 @@
-using System;
-using System.Threading.Tasks;
-using Lion.AbpPro.ConfigurationOptions;
-using Lion.AbpPro.Users;
-using Lion.AbpPro.Users.Dtos;
-using Microsoft.AspNetCore.Http;
+
+using Lion.AbpPro.BasicManagement.ConfigurationOptions;
+using Lion.AbpPro.BasicManagement.Users;
+using Lion.AbpPro.BasicManagement.Users.Dtos;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 
 namespace Lion.AbpPro.Pages
@@ -58,7 +53,7 @@ namespace Lion.AbpPro.Pages
 
                 var result = await _accountAppService.LoginAsync(new LoginInput()
                 { Name = userName, Password = password });
-                Response.Cookies.Append(AbpProHttpApiHostConsts.DefaultCookieName,
+                Response.Cookies.Append(AbpProHttpApiHostConst.DefaultCookieName,
                     result.Token, options);
             }
             catch (Exception e)

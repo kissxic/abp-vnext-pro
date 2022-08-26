@@ -1,28 +1,13 @@
-using Lion.AbpPro.DataDictionaryManagement;
-using Localization.Resources.AbpUi;
-using Lion.AbpPro.Localization;
-using Lion.AbpPro.NotificationManagement;
-using Volo.Abp.Account;
-using Volo.Abp.FeatureManagement;
-using Volo.Abp.Identity;
-using Volo.Abp.Localization;
-using Volo.Abp.Modularity;
-using Volo.Abp.PermissionManagement.HttpApi;
-using Volo.Abp.SettingManagement;
-using Volo.Abp.TenantManagement;
+using Lion.AbpPro.BasicManagement;
 
 namespace Lion.AbpPro
 {
     [DependsOn(
         typeof(AbpProApplicationContractsModule),
-        typeof(AbpAccountHttpApiModule),
-        typeof(AbpIdentityHttpApiModule),
-        typeof(AbpPermissionManagementHttpApiModule),
-        typeof(AbpTenantManagementHttpApiModule),
-        typeof(AbpFeatureManagementHttpApiModule),
-        typeof(AbpSettingManagementHttpApiModule),
+        typeof(BasicManagementHttpApiModule),
         typeof(DataDictionaryManagementHttpApiModule),
-        typeof(NotificationManagementHttpApiModule)
+        typeof(NotificationManagementHttpApiModule),
+        typeof(FileManagementHttpApiModule)
         )]
     public class AbpProHttpApiModule : AbpModule
     {

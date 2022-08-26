@@ -1,38 +1,13 @@
-using Lion.AbpPro.Localization;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Localization;
-using Volo.Abp;
-using Volo.Abp.AuditLogging;
-using Volo.Abp.BackgroundJobs;
-using Volo.Abp.Data;
-using Volo.Abp.FeatureManagement;
-using Volo.Abp.Identity;
-using Volo.Abp.Identity.Localization;
-using Volo.Abp.IdentityServer;
-using Volo.Abp.Localization;
-using Volo.Abp.Localization.ExceptionHandling;
-using Volo.Abp.Localization.Resources.AbpLocalization;
-using Volo.Abp.Modularity;
-using Volo.Abp.PermissionManagement;
-using Volo.Abp.SettingManagement;
-using Volo.Abp.TenantManagement;
-using Volo.Abp.Threading;
-using Volo.Abp.Timing.Localization.Resources.AbpTiming;
-using Volo.Abp.Validation;
-using Volo.Abp.Validation.Localization;
-using Volo.Abp.VirtualFileSystem;
+using Lion.AbpPro.BasicManagement;
+using Lion.AbpPro.BasicManagement.Localization;
 
 namespace Lion.AbpPro
 {
     [DependsOn(
-        typeof(AbpAuditLoggingDomainSharedModule),
-        typeof(AbpBackgroundJobsDomainSharedModule),
-        typeof(AbpFeatureManagementDomainSharedModule),
-        typeof(AbpIdentityDomainSharedModule),
-        typeof(AbpIdentityServerDomainSharedModule),
-        typeof(AbpPermissionManagementDomainSharedModule),
-        typeof(AbpSettingManagementDomainSharedModule),
-        typeof(AbpTenantManagementDomainSharedModule)
+        typeof(BasicManagementDomainSharedModule),
+        typeof(DataDictionaryManagementDomainSharedModule),
+        typeof(FileManagementDomainSharedModule),
+        typeof(NotificationManagementDomainSharedModule)
     )]
     public class AbpProDomainSharedModule : AbpModule
     {
@@ -46,28 +21,24 @@ namespace Lion.AbpPro
         {
             Configure<AbpVirtualFileSystemOptions>(options =>
             {
-                options.FileSets.AddEmbedded<AbpProDomainSharedModule>("Lion.AbpPro");
+                options.FileSets.AddEmbedded<AbpProDomainSharedModule>(AbpProDomainSharedConsts.NameSpace);
             });
           
             Configure<AbpLocalizationOptions>(options =>
             {
                 options.Resources
-                    .Add<AbpProResource>("zh-Hans")
-                    .AddBaseTypes(typeof(AbpValidationResource))
-                    .AddBaseTypes(typeof(AbpLocalizationResource))
-                    .AddBaseTypes(typeof(IdentityResource))
-                    .AddBaseTypes(typeof(AbpTimingResource))
-                    .AddVirtualJson("/Localization/AbpPro");
+                    .Add<AbpProResource>(AbpProDomainSharedConsts.DefaultCultureName)
+                    .AddVirtualJson("/Localization/AbpPro")
+                    .AddBaseTypes(typeof(BasicManagementResource))
+                    .AddBaseTypes(typeof(AbpTimingResource));
 
                 options.DefaultResourceType = typeof(AbpProResource);
             });
 
             Configure<AbpExceptionLocalizationOptions>(options =>
             {
-                options.MapCodeNamespace("AbpPro", typeof(AbpProResource));
+                options.MapCodeNamespace(AbpProDomainSharedConsts.NameSpace, typeof(AbpProResource));
             });
-
-           
         }
 
        

@@ -1,9 +1,3 @@
-using System.Threading;
-using System.Threading.Tasks;
-using Lion.AbpPro.DataDictionaryManagement.DataDictionaries.Dtos;
-using Volo.Abp.Application.Dtos;
-using Volo.Abp.Application.Services;
-
 namespace Lion.AbpPro.DataDictionaryManagement.DataDictionaries
 {
     public interface IDataDictionaryAppService : IApplicationService
@@ -12,21 +6,17 @@ namespace Lion.AbpPro.DataDictionaryManagement.DataDictionaries
         /// 分页查询字典项
         /// </summary>
         /// <param name="input"></param>
-        /// <param name="cancellationToken"></param>
         /// <returns></returns>
         Task<PagedResultDto<PagingDataDictionaryOutput>> GetPagingListAsync(
-            PagingDataDictionaryInput input,
-            CancellationToken cancellationToken = default);
+            PagingDataDictionaryInput input);
 
         /// <summary>
         /// 分页查询字典项明细
         /// </summary>
         /// <param name="input"></param>
-        /// <param name="cancellationToken"></param>
         /// <returns></returns>
         Task<PagedResultDto<PagingDataDictionaryDetailOutput>> GetPagingDetailListAsync(
-            PagingDataDictionaryDetailInput input,
-            CancellationToken cancellationToken = default);
+            PagingDataDictionaryDetailInput input);
 
         /// <summary>
         /// 创建字典类型
@@ -43,5 +33,29 @@ namespace Lion.AbpPro.DataDictionaryManagement.DataDictionaries
         /// 设置字典明细状态
         /// </summary>
         Task SetStatus(SetDataDictinaryDetailInput input);
+
+        Task UpdateDetailAsync(UpdateDetailInput input);
+
+        /// <summary>
+        /// 删除数据字典明细项
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        Task DeleteAsync(DeleteDataDictionaryDetailInput input);
+
+        /// <summary>
+        /// 删除字典类型
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        Task DeleteDictinaryTypeAsync(IdInput input);
+
+        /// <summary>
+        /// 修改数据字典
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        Task UpdateAsync(UpdateDataDictinaryInput input);
+
     }
 }

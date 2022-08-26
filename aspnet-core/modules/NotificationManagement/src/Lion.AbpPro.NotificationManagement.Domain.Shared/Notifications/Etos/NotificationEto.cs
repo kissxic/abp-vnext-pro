@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using Lion.AbpPro.NotificationManagement.Notifications.Enums;
 
 
 namespace Lion.AbpPro.NotificationManagement.Notifications.Etos
 {
     public class NotificationEto
     {
+        public Guid Id { get; set; }
+        
         /// <summary>
         /// 消息标题
         /// </summary>
@@ -21,7 +24,11 @@ namespace Lion.AbpPro.NotificationManagement.Notifications.Etos
         /// </summary>
         public MessageType MessageType { get; set; }
 
-
+        /// <summary>
+        /// 消息等级
+        /// </summary>
+        public MessageLevel MessageLevel { get;  set; }
+        
         /// <summary>
         /// 发送人
         /// </summary>

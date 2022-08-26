@@ -1,19 +1,3 @@
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using DotNetCore.CAP;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using Volo.Abp;
-using Volo.Abp.DependencyInjection;
-using Volo.Abp.EventBus;
-using Volo.Abp.EventBus.Distributed;
-using Volo.Abp.MultiTenancy;
-using Volo.Abp.Threading;
-using Volo.Abp.Uow;
-
 namespace Lion.AbpPro.CAP
 {
     public class AbpProAbpCapDistributedEventBus :
@@ -27,16 +11,16 @@ namespace Lion.AbpPro.CAP
 
         private readonly ICapPublisher CapPublisher;
 
-        private readonly UnitOfWorkManager _unitOfWorkManager;
         
         public AbpProAbpCapDistributedEventBus(IServiceScopeFactory serviceScopeFactory,
             IOptions<AbpDistributedEventBusOptions> distributedEventBusOptions,
             ICapPublisher capPublisher,
-            ICurrentTenant currentTenant, UnitOfWorkManager unitOfWorkManager)
-            : base(serviceScopeFactory, currentTenant,unitOfWorkManager)
+            ICurrentTenant currentTenant,
+            UnitOfWorkManager unitOfWorkManager,
+            IEventHandlerInvoker eventHandlerInvoker)
+            : base(serviceScopeFactory, currentTenant,unitOfWorkManager,eventHandlerInvoker)
         {
             CapPublisher = capPublisher;
-            _unitOfWorkManager = unitOfWorkManager;
             AbpDistributedEventBusOptions = distributedEventBusOptions.Value;
             HandlerFactories = new ConcurrentDictionary<Type, List<IEventHandlerFactory>>();
             EventTypes = new ConcurrentDictionary<string, Type>();

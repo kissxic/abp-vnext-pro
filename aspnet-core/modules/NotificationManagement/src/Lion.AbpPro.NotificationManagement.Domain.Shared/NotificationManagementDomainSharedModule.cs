@@ -1,11 +1,3 @@
-using Volo.Abp.Modularity;
-using Volo.Abp.Localization;
-using Lion.AbpPro.NotificationManagement.Localization;
-using Volo.Abp.Localization.ExceptionHandling;
-using Volo.Abp.Validation;
-using Volo.Abp.Validation.Localization;
-using Volo.Abp.VirtualFileSystem;
-
 namespace Lion.AbpPro.NotificationManagement
 {
     [DependsOn(
@@ -23,14 +15,14 @@ namespace Lion.AbpPro.NotificationManagement
             Configure<AbpLocalizationOptions>(options =>
             {
                 options.Resources
-                    .Add<NotificationManagementResource>("en")
+                    .Add<NotificationManagementResource>(NotificationManagementConsts.DefaultCultureName)
                     .AddBaseTypes(typeof(AbpValidationResource))
                     .AddVirtualJson("/Localization/NotificationManagement");
             });
 
             Configure<AbpExceptionLocalizationOptions>(options =>
             {
-                options.MapCodeNamespace("NotificationManagement", typeof(NotificationManagementResource));
+                options.MapCodeNamespace(NotificationManagementConsts.NameSpace, typeof(NotificationManagementResource));
             });
         }
     }
